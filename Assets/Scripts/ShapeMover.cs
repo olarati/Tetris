@@ -72,14 +72,7 @@ public class ShapeMover : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            Vector2 rotatePoint = _targetShape.Parts[0].transform.position;
-            for (int i = 0; i < _targetShape.Parts.Length; i++)
-            {
-                // поворот для смены позиции части
-                _targetShape.Parts[i].transform.RotateAround(rotatePoint, Vector3.forward, 90f);
-                // поворот, чтобы спрайт всегда был вертикально
-                _targetShape.Parts[i].transform.Rotate(Vector3.forward, -90f);
-            }
+            _targetShape.Rotate();
             UpdateByWalls();
             SetShapeInCells();
         }
