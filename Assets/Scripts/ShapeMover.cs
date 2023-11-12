@@ -1,4 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ShapeMover : MonoBehaviour
 {
@@ -29,6 +32,7 @@ public class ShapeMover : MonoBehaviour
     {
         HorizontalMove();
         VerticalMove();
+        Rotate();
     }
 
     private void HorizontalMove()
@@ -53,6 +57,23 @@ public class ShapeMover : MonoBehaviour
         }
     }
 
+    private void Rotate()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
+            Vector2 rotatePoint = TargetShape.Parts[0].transform.position;
+            for (int i = 0; i < TargetShape.Parts.Length; i++)
+            {
+                // поворот для смены позиции части
+                TargetShape.Parts[i].transform.RotateAround(rotatePoint, Vector3.forward, 90f);
+                // поворот, чтобы спрайт всегда был вертикально
+                TargetShape.Parts[i].transform.Rotate(Vector3.forward, -90f);
+            }
+            UpdateByWalls();
+            SetShapeInCells();
+        }
+    }
+
     private bool CheckMovePossible(Vector2Int deltaMove)
     {
         for (int i = 0; i < TargetShape.Parts.Length; i++)
@@ -67,5 +88,57 @@ public class ShapeMover : MonoBehaviour
         return true;
     }
 
+    private void SetShapeInCells()
+    {
+        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        {
+            Vector2 shapePartPosition = TargetShape.Parts[i].transform.position;
+            Vector2Int newPartCellId = GameField.GetNearestCellId(shapePartPosition);
+            Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
+            TargetShape.Parts[i].CellId = newPartCellId;
+            TargetShape.Parts[i].SetPosition(newPartPosition);
+        }
+    }
 
+    private void UpdateByWalls()
+    {
+        UpdateByWall(true);
+        UpdateByWall(false);
+    }
+
+    private void UpdateByWall(bool right)
+    {
+        if (CheckWall(right))
+        {
+            for (int i = 0; i < TargetShape.Parts.Length; i++)
+            {
+                TargetShape.Parts[i].transform.position += (right ? -1 : 1) * Vector3.right * GameField.CellSize.x;
+            }
+        }
+    }
+
+    private bool CheckWall(bool right)
+    {
+        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        {
+            float wallDistance = 0;
+            if (right)
+            {
+                wallDistance = TargetShape.Parts[i].transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
+                if (!Mathf.Approximately(wallDistance, 0) && wallDistance > 0)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                wallDistance = TargetShape.Parts[i].transform.position.x - GameField.FirstCellPoint.position.x;
+                if (!Mathf.Approximately(wallDistance, 0) && wallDistance < 0)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
