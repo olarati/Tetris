@@ -5,12 +5,14 @@ using UnityEngine.UIElements;
 
 public class ShapeMover : MonoBehaviour
 {
+    public GameStateChanger GameStateChanger;
     public GameField GameField;
-    public Shape TargetShape;
 
     public float MoveDownDelay = 0.8f;
 
     private float _moveDownTimer = 0;
+
+    private Shape _targetShape;
 
     public void MoveShape(Vector2Int deltaMove)
     {
@@ -19,13 +21,18 @@ public class ShapeMover : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
-            Vector2Int newPartCellId = TargetShape.Parts[i].CellId + deltaMove;
+            Vector2Int newPartCellId = _targetShape.Parts[i].CellId + deltaMove;
             Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
-            TargetShape.Parts[i].CellId = newPartCellId;
-            TargetShape.Parts[i].SetPosition(newPartPosition);
+            _targetShape.Parts[i].CellId = newPartCellId;
+            _targetShape.Parts[i].SetPosition(newPartPosition);
         }
+    }
+
+    public void SetTargetChape(Shape targetShape)
+    {
+        _targetShape = targetShape;
     }
 
     private void Update()
@@ -33,6 +40,10 @@ public class ShapeMover : MonoBehaviour
         HorizontalMove();
         VerticalMove();
         Rotate();
+        if (CheckBottom())
+        {
+            GameStateChanger.SpawnNextShape();
+        }
     }
 
     private void HorizontalMove()
@@ -61,13 +72,13 @@ public class ShapeMover : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            Vector2 rotatePoint = TargetShape.Parts[0].transform.position;
-            for (int i = 0; i < TargetShape.Parts.Length; i++)
+            Vector2 rotatePoint = _targetShape.Parts[0].transform.position;
+            for (int i = 0; i < _targetShape.Parts.Length; i++)
             {
                 // поворот для смены позиции части
-                TargetShape.Parts[i].transform.RotateAround(rotatePoint, Vector3.forward, 90f);
+                _targetShape.Parts[i].transform.RotateAround(rotatePoint, Vector3.forward, 90f);
                 // поворот, чтобы спрайт всегда был вертикально
-                TargetShape.Parts[i].transform.Rotate(Vector3.forward, -90f);
+                _targetShape.Parts[i].transform.Rotate(Vector3.forward, -90f);
             }
             UpdateByWalls();
             SetShapeInCells();
@@ -76,9 +87,9 @@ public class ShapeMover : MonoBehaviour
 
     private bool CheckMovePossible(Vector2Int deltaMove)
     {
-        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
-            Vector2Int newPartCellId = TargetShape.Parts[i].CellId + deltaMove;
+            Vector2Int newPartCellId = _targetShape.Parts[i].CellId + deltaMove;
             if(newPartCellId.x < 0 || newPartCellId.y < 0 
                 || newPartCellId.x >= GameField.FieldSize.x || newPartCellId.y >= GameField.FieldSize.y)
             {
@@ -90,13 +101,13 @@ public class ShapeMover : MonoBehaviour
 
     private void SetShapeInCells()
     {
-        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
-            Vector2 shapePartPosition = TargetShape.Parts[i].transform.position;
+            Vector2 shapePartPosition = _targetShape.Parts[i].transform.position;
             Vector2Int newPartCellId = GameField.GetNearestCellId(shapePartPosition);
             Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
-            TargetShape.Parts[i].CellId = newPartCellId;
-            TargetShape.Parts[i].SetPosition(newPartPosition);
+            _targetShape.Parts[i].CellId = newPartCellId;
+            _targetShape.Parts[i].SetPosition(newPartPosition);
         }
     }
 
@@ -108,23 +119,23 @@ public class ShapeMover : MonoBehaviour
 
     private void UpdateByWall(bool right)
     {
-        if (CheckWall(right))
+        if (CheckWallOver(right))
         {
-            for (int i = 0; i < TargetShape.Parts.Length; i++)
+            for (int i = 0; i < _targetShape.Parts.Length; i++)
             {
-                TargetShape.Parts[i].transform.position += (right ? -1 : 1) * Vector3.right * GameField.CellSize.x;
+                _targetShape.Parts[i].transform.position += (right ? -1 : 1) * Vector3.right * GameField.CellSize.x;
             }
         }
     }
 
-    private bool CheckWall(bool right)
+    private bool CheckWallOver(bool right)
     {
-        for (int i = 0; i < TargetShape.Parts.Length; i++)
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
             float wallDistance = 0;
             if (right)
             {
-                wallDistance = TargetShape.Parts[i].transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
+                wallDistance = _targetShape.Parts[i].transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
                 if (!Mathf.Approximately(wallDistance, 0) && wallDistance > 0)
                 {
                     return true;
@@ -132,11 +143,23 @@ public class ShapeMover : MonoBehaviour
             }
             else
             {
-                wallDistance = TargetShape.Parts[i].transform.position.x - GameField.FirstCellPoint.position.x;
+                wallDistance = _targetShape.Parts[i].transform.position.x - GameField.FirstCellPoint.position.x;
                 if (!Mathf.Approximately(wallDistance, 0) && wallDistance < 0)
                 {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    private bool CheckBottom()
+    {
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        {
+            if (_targetShape.Parts[i].CellId.y == 0)
+            {
+                return true;
             }
         }
         return false;
