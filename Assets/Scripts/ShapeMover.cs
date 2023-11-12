@@ -137,9 +137,7 @@ public class ShapeMover : MonoBehaviour
         if (right)
         {
             wallDistance = part.transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
-
-            int roundValue = 100; // для округления до двух знаков после запятой
-            wallDistance = Mathf.Round(wallDistance * roundValue);
+            wallDistance = GetRoundedWallDistance(wallDistance); 
             if (wallDistance !=  0 && wallDistance > 0)
             {
                 return true;
@@ -148,12 +146,20 @@ public class ShapeMover : MonoBehaviour
         else
         {
             wallDistance = part.transform.position.x - GameField.FirstCellPoint.position.x;
-            if (!Mathf.Approximately(wallDistance, 0) && wallDistance < 0)
+            wallDistance = GetRoundedWallDistance(wallDistance);
+            if (wallDistance != 0 && wallDistance < 0)
             {
                 return true;
             }
         }
         return false;
+    }
+
+    private float GetRoundedWallDistance(float distance)
+    {
+        int roundValue = 100; // для округления до двух знаков после запятой
+        distance = Mathf.Round(distance * roundValue);
+        return distance;
     }
 
     private bool CheckBottom()
