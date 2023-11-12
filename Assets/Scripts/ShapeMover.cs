@@ -28,6 +28,7 @@ public class ShapeMover : MonoBehaviour
             _targetShape.Parts[i].CellId = newPartCellId;
             _targetShape.Parts[i].SetPosition(newPartPosition);
         }
+
     }
 
     public void SetTargetChape(Shape targetShape)
@@ -74,6 +75,7 @@ public class ShapeMover : MonoBehaviour
         {
             _targetShape.Rotate();
             UpdateByWalls();
+            UpdateByBottom();
             SetShapeInCells();
         }
     }
@@ -153,6 +155,32 @@ public class ShapeMover : MonoBehaviour
         int roundValue = 100; // для округления до двух знаков после запятой
         distance = Mathf.Round(distance * roundValue);
         return distance;
+    }
+
+    private void UpdateByBottom()
+    {
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        {
+            if (CheckBottomOver(_targetShape.Parts[i]))
+            {
+                for (int j = 0; j < _targetShape.Parts.Length; j++)
+                {
+                    _targetShape.Parts[j].transform.position += Vector3.up * GameField.CellSize.y;
+                }
+            }
+        }
+    }
+
+    private bool CheckBottomOver(ShapePart part)
+    {
+        float wallDistance = 0;
+        wallDistance = part.transform.position.y - GameField.FirstCellPoint.position.y;
+        wallDistance = GetRoundedWallDistance(wallDistance);
+        if (wallDistance != 0 && wallDistance < 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     private bool CheckBottom()
