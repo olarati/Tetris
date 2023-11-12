@@ -119,35 +119,38 @@ public class ShapeMover : MonoBehaviour
 
     private void UpdateByWall(bool right)
     {
-        if (CheckWallOver(right))
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
-            for (int i = 0; i < _targetShape.Parts.Length; i++)
+            if (CheckWallOver(_targetShape.Parts[i], right))
             {
-                _targetShape.Parts[i].transform.position += (right ? -1 : 1) * Vector3.right * GameField.CellSize.x;
+                for (int j = 0; j < _targetShape.Parts.Length; j++)
+                {
+                    _targetShape.Parts[j].transform.position += (right ? -1 : 1) * Vector3.right * GameField.CellSize.x;
+                }
             }
         }
     }
 
-    private bool CheckWallOver(bool right)
+    private bool CheckWallOver(ShapePart part, bool right)
     {
-        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        float wallDistance = 0;
+        if (right)
         {
-            float wallDistance = 0;
-            if (right)
+            wallDistance = part.transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
+
+            int roundValue = 100; // для округления до двух знаков после запятой
+            wallDistance = Mathf.Round(wallDistance * roundValue);
+            if (wallDistance !=  0 && wallDistance > 0)
             {
-                wallDistance = _targetShape.Parts[i].transform.position.x - (GameField.FirstCellPoint.position.x + (GameField.FieldSize.x - 1) * GameField.CellSize.x);
-                if (!Mathf.Approximately(wallDistance, 0) && wallDistance > 0)
-                {
-                    return true;
-                }
+                return true;
             }
-            else
+        }
+        else
+        {
+            wallDistance = part.transform.position.x - GameField.FirstCellPoint.position.x;
+            if (!Mathf.Approximately(wallDistance, 0) && wallDistance < 0)
             {
-                wallDistance = _targetShape.Parts[i].transform.position.x - GameField.FirstCellPoint.position.x;
-                if (!Mathf.Approximately(wallDistance, 0) && wallDistance < 0)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
