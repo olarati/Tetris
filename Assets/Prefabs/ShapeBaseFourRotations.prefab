@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8295028895508727378, guid: 1db322b3729be984f9e636868a23c97e, type: 3}
       propertyPath: m_Name
-      value: ShapeBaseSimple Variant
+      value: ShapeBaseFourRotations
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -58,7 +58,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8295028895508727378, guid: 1db322b3729be984f9e636868a23c97e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1725713978922885009}
+      addedObject: {fileID: 5400228585304293288}
   m_SourcePrefab: {fileID: 100100000, guid: 1db322b3729be984f9e636868a23c97e, type: 3}
 --- !u!114 &2852016562241319094 stripped
 MonoBehaviour:
@@ -98,7 +98,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8295028895508727378, guid: 1db322b3729be984f9e636868a23c97e, type: 3}
   m_PrefabInstance: {fileID: 2453500620132324784}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1725713978922885009
+--- !u!114 &5400228585304293288
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5841530474435318754}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0f5bffd32928d14095a1a20c0472a00, type: 3}
+  m_Script: {fileID: 11500000, guid: 26be3332aec7ccb4182b9e847f366e24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Parts:

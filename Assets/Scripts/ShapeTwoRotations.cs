@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShapeTwoRotates : Shape
+public class ShapeTwoRotations : Shape
 {
     bool _rotated = false;
 
