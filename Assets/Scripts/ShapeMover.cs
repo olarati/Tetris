@@ -1,7 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ShapeMover : MonoBehaviour
 {
