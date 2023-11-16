@@ -68,6 +68,26 @@ public class GameField : MonoBehaviour
         return new Vector2Int(resultX, resultY);
     }
 
+    public void SetCellEmpty(Vector2Int cellId, bool value)
+    {
+        GameFieldCell cell = GetCell(cellId.x, cellId.y);
+        if(cell == null)
+        {
+            return;
+        }
+        cell.SetIsEmpty(value);
+    }
+
+    public bool GetCellEmpty(Vector2Int cellId)
+    {
+        GameFieldCell cell = GetCell(cellId.x, cellId.y);
+        if (cell == null)
+        {
+            return false;
+        }
+        return cell.GetIsEmpty();
+    }
+
     private GameFieldCell GetCell(int x, int y)
     {
         if (x < 0 || y < 0 || x >= FieldSize.x || y >= FieldSize.y)

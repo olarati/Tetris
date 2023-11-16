@@ -18,7 +18,7 @@ public class ShapeMover : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        for (int i = 0; i < _targetShape.Parts.Length; i++) 
         {
             Vector2Int newPartCellId = _targetShape.Parts[i].CellId + deltaMove;
             Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
@@ -35,10 +35,16 @@ public class ShapeMover : MonoBehaviour
 
     private void Update()
     {
+        SetShapePartCellsEmpty(true);
         HorizontalMove();
         VerticalMove();
         Rotate();
-        if (CheckBottom())
+
+        bool reachBottom = CheckBottom();
+        bool reachOtherShape = CheckOtherShape();
+        SetShapePartCellsEmpty(false);
+
+        if (reachBottom || reachOtherShape)
         {
             GameStateChanger.SpawnNextShape();
         }
@@ -190,5 +196,25 @@ public class ShapeMover : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private bool CheckOtherShape()
+    {
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        {
+            if (!GameField.GetCellEmpty(_targetShape.Parts[i].CellId + Vector2Int.down))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void SetShapePartCellsEmpty(bool value)
+    {
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        {
+            GameField.SetCellEmpty(_targetShape.Parts[i].CellId, value);
+        }
     }
 }
