@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c0778ab757f9347987437d4f4b791e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapePrefabs:
+  ShapePrefabs:
   - {fileID: 7066243296171556124, guid: 4a5e1146344049a4d9b72cf0ee8ef902, type: 3}
   - {fileID: 7250631951694724635, guid: b5822104f75e0f34180e9b1855510994, type: 3}
   - {fileID: 650278474846454613, guid: 7347c895e3385714cbb6e809b8d03d1c, type: 3}
