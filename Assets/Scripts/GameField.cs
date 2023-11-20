@@ -5,6 +5,7 @@ public class GameField : MonoBehaviour
     public Transform FirstCellPoint;
     public Vector2 CellSize;
     public Vector2Int FieldSize;
+    public int InvisibleYFieldSize = 3;
 
     private GameFieldCell[,] _cells;
 

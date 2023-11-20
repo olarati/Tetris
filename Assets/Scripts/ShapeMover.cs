@@ -8,6 +8,7 @@ public class ShapeMover : MonoBehaviour
     public float MoveDownDelay = 0.8f;
 
     private float _moveDownTimer = 0;
+    private bool _isActive;
 
     private Shape _targetShape;
 
@@ -33,8 +34,18 @@ public class ShapeMover : MonoBehaviour
         _targetShape = targetShape;
     }
 
+    public void SetActive(bool value)
+    {
+        _isActive = value;
+    }
+
     private void Update()
     {
+        if (!_isActive)
+        {
+            return;
+        }
+
         SetShapePartCellsEmpty(true);
         HorizontalMove();
         VerticalMove();
@@ -46,7 +57,14 @@ public class ShapeMover : MonoBehaviour
 
         if (reachBottom || reachOtherShape)
         {
-            GameStateChanger.SpawnNextShape();
+            if (CheckShapeTopOver())
+            {
+                GameStateChanger.EndGame();
+            }
+            else
+            {
+                GameStateChanger.SpawnNextShape();
+            }
         }
     }
 
@@ -176,8 +194,7 @@ public class ShapeMover : MonoBehaviour
 
     private bool CheckBottomOver(ShapePart part)
     {
-        float wallDistance = 0;
-        wallDistance = part.transform.position.y - GameField.FirstCellPoint.position.y;
+        float wallDistance = part.transform.position.y - GameField.FirstCellPoint.position.y;
         wallDistance = GetRoundedWallDistance(wallDistance);
         if (wallDistance != 0 && wallDistance < 0)
         {
@@ -216,5 +233,22 @@ public class ShapeMover : MonoBehaviour
         {
             GameField.SetCellEmpty(_targetShape.Parts[i].CellId, value);
         }
+    }
+
+
+
+    private bool CheckShapeTopOver()
+    {
+        float topCellYPosition = GameField.FirstCellPoint.position.y + (GameField.FieldSize.y - GameField.InvisibleYFieldSize) * GameField.CellSize.y;
+        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        {
+            float wallDistance = _targetShape.Parts[i].transform.position.y - topCellYPosition;
+            wallDistance = GetRoundedWallDistance(wallDistance);
+            if (wallDistance != 0 && wallDistance > 0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
