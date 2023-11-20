@@ -1,4 +1,4 @@
-public class ShapeNoRatations : Shape
+public class ShapeNoRotations : Shape
 {
     public override void Rotate() { }
 }
