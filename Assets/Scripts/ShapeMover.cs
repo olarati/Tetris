@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ShapeMover : MonoBehaviour
@@ -11,6 +12,7 @@ public class ShapeMover : MonoBehaviour
     private bool _isActive;
 
     private Shape _targetShape;
+    private List<Shape> _allShapes = new List<Shape>();
 
     public void MoveShape(Vector2Int deltaMove)
     {
@@ -21,17 +23,17 @@ public class ShapeMover : MonoBehaviour
 
         for (int i = 0; i < _targetShape.Parts.Length; i++) 
         {
-            Vector2Int newPartCellId = _targetShape.Parts[i].CellId + deltaMove;
-            Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
-            _targetShape.Parts[i].CellId = newPartCellId;
-            _targetShape.Parts[i].SetPosition(newPartPosition);
+            MoveShapePart(_targetShape.Parts[i], deltaMove);
         }
-
     }
 
-    public void SetTargetChape(Shape targetShape)
+    public void SetTargetShape(Shape targetShape)
     {
         _targetShape = targetShape;
+        if (!_allShapes.Contains(targetShape))
+        {
+            _allShapes.Add(targetShape);
+        }
     }
 
     public void SetActive(bool value)
@@ -46,25 +48,18 @@ public class ShapeMover : MonoBehaviour
             return;
         }
 
-        SetShapePartCellsEmpty(true);
+        SetShapePartCellsEmpty(_targetShape, true);
         HorizontalMove();
         VerticalMove();
         Rotate();
 
         bool reachBottom = CheckBottom();
         bool reachOtherShape = CheckOtherShape();
-        SetShapePartCellsEmpty(false);
+        SetShapePartCellsEmpty(_targetShape, false);
 
         if (reachBottom || reachOtherShape)
         {
-            if (CheckShapeTopOver())
-            {
-                GameStateChanger.EndGame();
-            }
-            else
-            {
-                GameStateChanger.SpawnNextShape();
-            }
+            EndMovement();
         }
     }
 
@@ -113,6 +108,14 @@ public class ShapeMover : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private void MoveShapePart(ShapePart part, Vector2Int deltaMove)
+    {
+        Vector2Int newPartCellId = part.CellId + deltaMove;
+        Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
+        part.CellId = newPartCellId;
+        part.SetPosition(newPartPosition);
     }
 
     private void SetShapeInCells()
@@ -217,9 +220,11 @@ public class ShapeMover : MonoBehaviour
 
     private bool CheckOtherShape()
     {
+        Vector2Int checkingCellId;
         for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
-            if (!GameField.GetCellEmpty(_targetShape.Parts[i].CellId + Vector2Int.down))
+            checkingCellId = _targetShape.Parts[i].CellId + Vector2Int.down;
+            if (!GameField.GetCellEmpty(checkingCellId) && !_targetShape.CheckContainsCellId(checkingCellId))
             {
                 return true;
             }
@@ -227,14 +232,36 @@ public class ShapeMover : MonoBehaviour
         return false;
     }
 
-    private void SetShapePartCellsEmpty(bool value)
+    private void SetShapePartCellsEmpty(Shape shape, bool value)
     {
-        for (int i = 0; i < _targetShape.Parts.Length; i++)
+        for (int i = 0; i < shape.Parts.Length; i++)
         {
-            GameField.SetCellEmpty(_targetShape.Parts[i].CellId, value);
+            SetShapePartCellEmpty(shape.Parts[i], value);
         }
     }
 
+    private void SetShapePartCellEmpty(ShapePart part, bool value)
+    {
+        if (!part.GetActive())
+        {
+            return;
+        }
+        GameField.SetCellEmpty(part.CellId, value);
+    }
+
+
+    private void EndMovement()
+    {
+        if (CheckShapeTopOver())
+        {
+            GameStateChanger.EndGame();
+        }
+        else
+        {
+            TryRemoveFilledRows();
+            GameStateChanger.SpawnNextShape();
+        }
+    }
 
 
     private bool CheckShapeTopOver()
@@ -251,4 +278,58 @@ public class ShapeMover : MonoBehaviour
         }
         return false;
     }
+
+    private void TryRemoveFilledRows()
+    {
+        bool[] rowFillings = GameField.GetRowFillings();
+        for (int i = rowFillings.Length - 1; i >= 0; i--)
+        {
+            if (rowFillings[i])
+            {
+                RemoveRow(i);
+            }
+        }
+    }
+
+    private void RemoveRow(int id)
+    {
+        int checkingRowId;
+        Shape shape;
+        ShapePart part;
+        for (int i = 0; i < GameField.FieldSize.y - GameField.InvisibleYFieldSize; i++)
+        {
+            checkingRowId = i;
+            for (int j = 0; j < _allShapes.Count; j++)
+            {
+                shape = _allShapes[j];
+                for (int k = 0; k < shape.Parts.Length; k++)
+                {
+                    part = shape.Parts[k];
+                    if (part.CellId.y != checkingRowId || !part.GetActive())
+                    {
+                        continue;
+                    }
+
+                    if (part.CellId.y > id)
+                    {
+                        SetShapePartCellEmpty(part, true);
+                        MoveShapePart(part, Vector2Int.down);
+                        SetShapePartCellEmpty(part, false);
+                    }
+                    else if (part.CellId.y == id)
+                    {
+                        SetShapePartCellEmpty(part, true);
+                        shape.RemovePart(part);
+                        if (shape.CheckNeedDestroy())
+                        {
+                            _allShapes.Remove(shape);
+                            Destroy(shape.gameObject);
+                            j--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

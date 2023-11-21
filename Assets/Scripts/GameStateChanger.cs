@@ -17,7 +17,7 @@ public class GameStateChanger : MonoBehaviour
     public void SpawnNextShape()
     {
         Shape nextShape = ShapeSpawner.SpawnNextShape();
-        ShapeMover.SetTargetChape(nextShape);
+        ShapeMover.SetTargetShape(nextShape);
         ShapeMover.MoveShape(Vector2Int.right * (int)(GameField.FieldSize.x * 0.5f) + Vector2Int.up * (GameField.FieldSize.y - GameField.InvisibleYFieldSize));
     }
 

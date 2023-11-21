@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameField : MonoBehaviour
@@ -87,6 +88,26 @@ public class GameField : MonoBehaviour
             return false;
         }
         return cell.GetIsEmpty();
+    }
+
+    public bool[] GetRowFillings()
+    {
+        bool[] rowFillings = new bool[FieldSize.y - InvisibleYFieldSize];
+        bool isRowFilled;
+        for (int j = 0; j < rowFillings.Length; j++)
+        {
+            isRowFilled = true;
+            for (int i = 0; i < FieldSize.x; i++)
+            {
+                if (_cells[i,j].GetIsEmpty())
+                {
+                    isRowFilled = false;
+                    break;
+                }
+            }
+            rowFillings[j] = isRowFilled;
+        }
+        return rowFillings;
     }
 
     private GameFieldCell GetCell(int x, int y)
