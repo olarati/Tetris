@@ -106,8 +106,12 @@ public class ShapeMover : MonoBehaviour
         for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
             Vector2Int newPartCellId = _targetShape.Parts[i].CellId + deltaMove;
-            if(newPartCellId.x < 0 || newPartCellId.y < 0 
+            if (newPartCellId.x < 0 || newPartCellId.y < 0 
                 || newPartCellId.x >= GameField.FieldSize.x || newPartCellId.y >= GameField.FieldSize.y)
+            {
+                return false;
+            }
+            else if (!GameField.GetCellEmpty(newPartCellId))
             {
                 return false;
             }
