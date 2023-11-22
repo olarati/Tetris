@@ -94,10 +94,16 @@ public class ShapeMover : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
+            Vector2Int[] startCellIds = _targetShape.GetPartCellIds();
+
             _targetShape.Rotate();
             UpdateByWalls();
             UpdateByBottom();
-            SetShapeInCells();
+            bool shapeSetted = TrySetShapeInCells();
+            if (!shapeSetted)
+            {
+                MoveShapeToCellIds(_targetShape, startCellIds);
+            }
         }
     }
 
@@ -119,15 +125,31 @@ public class ShapeMover : MonoBehaviour
         return true;
     }
 
-    private void SetShapeInCells()
+    private bool TrySetShapeInCells()
     {
         for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
             Vector2 shapePartPosition = _targetShape.Parts[i].transform.position;
             Vector2Int newPartCellId = GameField.GetNearestCellId(shapePartPosition);
+            if (!GameField.GetCellEmpty(newPartCellId))
+            {
+                return false;
+            }
             Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
             _targetShape.Parts[i].CellId = newPartCellId;
             _targetShape.Parts[i].SetPosition(newPartPosition);
+        }
+        return true;
+    }
+
+    private void MoveShapeToCellIds(Shape shape, Vector2Int[] cellIds)
+    {
+        for (int i = 0; i < shape.Parts.Length; i++)
+        {
+            Vector2Int newPartCellId = cellIds[i];
+            Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
+            shape.Parts[i].CellId = newPartCellId;
+            shape.Parts[i].SetPosition(newPartPosition);
         }
     }
 
