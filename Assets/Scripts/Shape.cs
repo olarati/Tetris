@@ -6,6 +6,16 @@ public class Shape : MonoBehaviour
 
     public virtual void Rotate() { }
 
+    public Vector2Int[] GetPartCellIds()
+    {
+        Vector2Int[] startCellIds = new Vector2Int[Parts.Length];
+        for (int i = 0; i < Parts.Length; i++)
+        {
+            startCellIds[i] = Parts[i].CellId;
+        }
+        return startCellIds;
+    }
+
     public void RemovePart(ShapePart part)
     {
         for (int i = 0; i < Parts.Length; i++)

@@ -89,10 +89,16 @@ public class ShapeMover : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
+            Vector2Int[] startCellIds = _targetShape.GetPartCellIds();
+
             _targetShape.Rotate();
             UpdateByWalls();
             UpdateByBottom();
-            SetShapeInCells();
+            bool shapeSetted = TrySetShapeInCells();
+            if (!shapeSetted)
+            {
+                MoveShapeToCellIds(_targetShape, startCellIds);
+            }
         }
     }
 
@@ -117,21 +123,39 @@ public class ShapeMover : MonoBehaviour
     private void MoveShapePart(ShapePart part, Vector2Int deltaMove)
     {
         Vector2Int newPartCellId = part.CellId + deltaMove;
-        Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
-        part.CellId = newPartCellId;
-        part.SetPosition(newPartPosition);
+        MoveShapePartToCellId(part, newPartCellId);
     }
 
-    private void SetShapeInCells()
+    private bool TrySetShapeInCells()
     {
         for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
             Vector2 shapePartPosition = _targetShape.Parts[i].transform.position;
             Vector2Int newPartCellId = GameField.GetNearestCellId(shapePartPosition);
+            if (!GameField.GetCellEmpty(newPartCellId))
+            {
+                return false;
+            }
             Vector2 newPartPosition = GameField.GetCellPosition(newPartCellId);
             _targetShape.Parts[i].CellId = newPartCellId;
             _targetShape.Parts[i].SetPosition(newPartPosition);
         }
+        return true;
+    }
+
+    private void MoveShapeToCellIds(Shape shape, Vector2Int[] cellIds)
+    {
+        for (int i = 0; i < shape.Parts.Length; i++)
+        {
+            MoveShapePartToCellId(shape.Parts[i], cellIds[i]);
+        }
+    }
+
+    private void MoveShapePartToCellId(ShapePart part, Vector2Int cellId)
+    {
+        Vector2 newPartPosition = GameField.GetCellPosition(cellId);
+        part.CellId = cellId;
+        part.SetPosition(newPartPosition);
     }
 
     private void UpdateByWalls()
