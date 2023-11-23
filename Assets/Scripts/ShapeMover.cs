@@ -41,6 +41,17 @@ public class ShapeMover : MonoBehaviour
         _isActive = value;
     }
 
+    public void DestroyAllShapes()
+    {
+        Shape shape;
+        for (int i = _allShapes.Count - 1; i >= 0; i--)
+        {
+            shape = _allShapes[i];
+            SetShapePartCellsEmpty(shape, true);
+            DestroyShape(shape);
+        }
+    }
+
     private void Update()
     {
         if (!_isActive)
@@ -350,14 +361,19 @@ public class ShapeMover : MonoBehaviour
                         shape.RemovePart(part);
                         if (shape.CheckNeedDestroy())
                         {
-                            _allShapes.Remove(shape);
-                            Destroy(shape.gameObject);
+                            DestroyShape(shape);
                             j--;
                         }
                     }
                 }
             }
         }
+    }
+
+    private void DestroyShape(Shape shape)
+    {
+        _allShapes.Remove(shape);
+        Destroy(shape.gameObject);
     }
 
 }

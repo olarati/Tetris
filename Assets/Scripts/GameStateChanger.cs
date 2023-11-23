@@ -29,7 +29,8 @@ public class GameStateChanger : MonoBehaviour
 
     public void RestartGame()
     {
-        // допишем в следущем уроке
+        ShapeMover.DestroyAllShapes();
+        StartGame();
     }
 
     private void FirstStartGame()
