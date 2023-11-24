@@ -5,6 +5,7 @@ public class ShapeMover : MonoBehaviour
 {
     public GameStateChanger GameStateChanger;
     public GameField GameField;
+    public Score Score;
 
     public float MoveDownDelay = 0.8f;
 
@@ -299,6 +300,7 @@ public class ShapeMover : MonoBehaviour
         {
             TryRemoveFilledRows();
             GameStateChanger.SpawnNextShape();
+            Score.AddScore(1);
         }
     }
 
