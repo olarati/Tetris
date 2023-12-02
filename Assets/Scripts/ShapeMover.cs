@@ -307,7 +307,7 @@ public class ShapeMover : MonoBehaviour
 
     private bool CheckShapeTopOver()
     {
-        float topCellYPosition = GameField.FirstCellPoint.position.y + (GameField.FieldSize.y - GameField.InvisibleYFieldSize) * GameField.CellSize.y;
+        float topCellYPosition = GameField.FirstCellPoint.position.y + (GameField.FieldSize.y - GameField.InvisibleYFieldSize - 2) * GameField.CellSize.y;
         for (int i = 0; i < _targetShape.Parts.Length; i++)
         {
             float wallDistance = _targetShape.Parts[i].transform.position.y - topCellYPosition;

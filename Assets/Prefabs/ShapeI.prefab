@@ -100,6 +100,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6555337058980301720, guid: c5b95753425bf22429bb1c8a00b3419f, type: 3}
+      propertyPath: ExtraSpawnYMove
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6754605635443167510, guid: c5b95753425bf22429bb1c8a00b3419f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

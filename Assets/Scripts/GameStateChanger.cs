@@ -23,7 +23,7 @@ public class GameStateChanger : MonoBehaviour
     {
         Shape nextShape = ShapeSpawner.SpawnNextShape();
         ShapeMover.SetTargetShape(nextShape);
-        ShapeMover.MoveShape(Vector2Int.right * (int)(GameField.FieldSize.x * 0.5f) + Vector2Int.up * (GameField.FieldSize.y - GameField.InvisibleYFieldSize));
+        ShapeMover.MoveShape(Vector2Int.right * (int)(GameField.FieldSize.x * 0.5f) + Vector2Int.up * (GameField.FieldSize.y - GameField.InvisibleYFieldSize + nextShape.ExtraSpawnYMove));
     }
 
     public void EndGame()
