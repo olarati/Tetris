@@ -8,6 +8,7 @@ public class ShapeMover : MonoBehaviour
     public Score Score;
 
     public float MoveDownDelay = 0.8f;
+    public float FastDownTimeSpeed = 2f;
 
     private float _moveDownTimer = 0;
     private bool _isActive;
@@ -90,7 +91,12 @@ public class ShapeMover : MonoBehaviour
     private void VerticalMove()
     {
         _moveDownTimer += Time.deltaTime;
-        if(_moveDownTimer >= MoveDownDelay || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+        {
+            _moveDownTimer += Time.deltaTime * FastDownTimeSpeed;
+        }
+
+        if(_moveDownTimer >= MoveDownDelay)
         {
             _moveDownTimer = 0;
             MoveShape(Vector2Int.down);
