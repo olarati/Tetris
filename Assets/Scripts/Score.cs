@@ -6,6 +6,7 @@ public class Score : MonoBehaviour
     private const string BestScoreKey = "BestScore";
 
     private TextMeshProUGUI _scoreText;
+    private Animation _scoreIncreaseAnimation; 
     private int _score;
     private int _bestScore;
 
@@ -13,6 +14,7 @@ public class Score : MonoBehaviour
     public void AddScore(int value)
     {
         SetScore(_score + value);
+        PlayScoreIncreaseAnimation();
     }
 
     // Перезапускаем игру
@@ -52,6 +54,7 @@ public class Score : MonoBehaviour
     private void FillComponents()
     {
         _scoreText = GetComponentInChildren<TextMeshProUGUI>();
+        _scoreIncreaseAnimation = GetComponent<Animation>();
     }
 
     // Устанавливаем текущий счёт
@@ -77,5 +80,9 @@ public class Score : MonoBehaviour
     private void SaveBestScore(int value)
     {
         PlayerPrefs.SetInt(BestScoreKey, value);
+    }
+    private void PlayScoreIncreaseAnimation()
+    {
+        _scoreIncreaseAnimation.Play(PlayMode.StopAll);
     }
 }
