@@ -566,8 +566,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FirstCellPoint: {fileID: 374181346}
   CellSize: {x: 0.8, y: 0.8}
-  FieldSize: {x: 10, y: 25}
-  InvisibleYFieldSize: 3
+  FieldSize: {x: 10, y: 26}
+  InvisibleYFieldSize: 4
 --- !u!212 &743539718
 SpriteRenderer:
   m_ObjectHideFlags: 0
