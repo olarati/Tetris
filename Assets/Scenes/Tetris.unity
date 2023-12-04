@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0079169ed05db4293b03eee0ebc280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShownScoreChangeDuration: 0.2
 --- !u!224 &229944463
 RectTransform:
   m_ObjectHideFlags: 0
@@ -237,6 +238,9 @@ MonoBehaviour:
   GameField: {fileID: 743539717}
   Score: {fileID: 229944462}
   MoveDownDelay: 0.3
+  FastDownTimeSpeed: 2
+  ScoreByShape: 1
+  ScoreByRow: 10
 --- !u!1 &374181345
 GameObject:
   m_ObjectHideFlags: 0
