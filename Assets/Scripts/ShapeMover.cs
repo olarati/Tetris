@@ -10,6 +10,9 @@ public class ShapeMover : MonoBehaviour
     public float MoveDownDelay = 0.8f;
     public float FastDownTimeSpeed = 2f;
 
+    public int ScoreByShape = 1;
+    public int ScoreByRow = 10;
+
     private float _moveDownTimer = 0;
     private bool _isActive;
 
@@ -306,7 +309,7 @@ public class ShapeMover : MonoBehaviour
         {
             TryRemoveFilledRows();
             GameStateChanger.SpawnNextShape();
-            Score.AddScore(1);
+            Score.AddScore(ScoreByShape);
         }
     }
 
@@ -376,6 +379,7 @@ public class ShapeMover : MonoBehaviour
                 }
             }
         }
+        Score.AddScore(ScoreByRow);
     }
 
     private void DestroyShape(Shape shape)
